@@ -59,7 +59,7 @@ Can be ignored. The missing files are related to the Intel Sensor Hub (ISH).
 #### Wireless network setup
 
 Network setup will fail on the get IP address step (DHCP). The reason is that the
-installer don't detects that the network interface is actually a wireless card.
+installer don't detect that the network interface is actually a wireless card.
 
 To get around this there are two options.
 
@@ -93,7 +93,7 @@ wireless networks.)
 
 3. Go to the shell
 
-Select "Go back", which will bring up the main menu. Select "shell" from the menu.
+Select "Go back" one or two times. This should bring up the main menu. Select "shell" from the menu.
 
 4. Mount the USB stick on the ASUS with the command:
 
@@ -137,21 +137,26 @@ These are:
 - No sound.
 - Thouchpad not working.
 
-With the machine booted and set up with a DM (display manager).
-
 ### LCD brightness
 
 Add `xe.enable_dpcd_backlight=1` to the `GRUB_CMDLINE_LINUX_DEFAULT` line in `/etc/default/grub`.
-Run `update-grub` to update `/boot/grub/grub.cfg`.
 
-After reboot it should be possible to adjust the LCD brightness.
+The line should now look like this:
+
+```
+GRUB_CMDLINE_LINUX_DEFAULT="xe.enable_dpcd_backlight=1 quiet"
+```
+
+Run `update-grub`.
+
+After reboot it should now be possible to adjust the LCD brightness.
 
 ### Sound
 
 Install latest version of the `firmware-sof-signed` package. The current version of this package
-in testing is old and don't provide the firmware required to make sound work.
+in testing is old (ver. 2025.05.1) and don't provide the firmware required to make sound work.
 
-Debian unstable (sid) has the latest version. Download and install this package with:
+Debian unstable (sid) has the latest version (2025.12.2). Download and install this package with:
 
 ```
 cd /tmp
@@ -159,7 +164,7 @@ wget http://ftp.us.debian.org/debian/pool/non-free-firmware/f/firmware-sof/firmw
 sudo dpkg -i /tmp/firmware-sof-signed_2025.12.2-2_all.deb
 ```
 
-After reboot sound should now work.
+After reboot sound (and microphone) should now work.
 
 Note that if the old version of the package is installed, the package should probably be removed first.
 Can be done with:
@@ -168,7 +173,9 @@ Can be done with:
 apt uninstall firmware-sof-signed
 ```
 
-(An alterative to installing the package as described, is to make packages available in "unstable" available
+before installing the new version of the package.
+
+(An alterative to installing the package as described, is to make packages in "unstable" available
 through "apt pinning". See Debian documentation for how this can be done.)
 
 ### Touchpad
@@ -210,7 +217,7 @@ The ASUS ExpertBook Ultra omits the **Microsoft Corporation UEFI CA 2011** CA ce
 
 To make secure boot work this certificate must be added to the list of valid certificates (enroll).
 
-First obtain the CA and add it to the boot directory.
+First obtain the certificate and add it to the boot directory.
 
 ```
 wget https://www.microsoft.com/pkiops/certs/MicCorUEFCA2011_2011-06-27.crt
@@ -220,9 +227,9 @@ sudo cp MicCorUEFCA2011_2011-06-27.crt /boot/efi/keys/
 
 Reboot into BIOS:
 
-1. Go to `Security` and enable "Secure boot". Some additional menues will now be available.
+1. Go to `Security` and enable "Secure boot". The menues referred to below will now become available.
 2. Go to `Key Management -> Authorized Signatures (db)`.
-3. Select **Append** (not Replace) -> browse ESP and select `keys/MicCorUEFCA2011_2011-06-27.crt` and add the CA.
+3. Select **Append** (not Replace) -> Browse ESP and select `keys/MicCorUEFCA2011_2011-06-27.crt` and add the certificate.
 
 `F10` to save and boot.
 
