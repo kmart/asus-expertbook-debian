@@ -29,7 +29,7 @@ dd if=/tmp/debian-testing-amd64-netinst.iso of=/dev/sdd bs=1M
 
 ### Boot from the USB stick
 
-Hold down the Esc key and the press the power up key. Keep on holding down the Esc key until the
+Hold down the Esc key and start booting by pressing the power key. Keep on holding down the Esc key until the
 boot menu show up.
 
 Inside the BIOS change the following:
@@ -39,35 +39,35 @@ Inside the BIOS change the following:
 
 Insert the USB stick in one of the USB ports and press F10 to save the BIOS changes (or use the menu).
 
-Again hold down the Esc key while the machine is booting. This should bring up the boot menu.
+Again hold down the Esc key while the machine is booting. This should again bring up the boot menu.
 From the boot menu select the USB stick.
 
-### Debian installation
+### Installation
 
 Should be straight forward, but there are a few important steps:
 
 #### `root` and user setup
 
 Skip defining a password for `root`. This will cause the `sudo` command to be installed,
-which is a "better way" for doing administrative task.
+which is a "better" command for doing administrative task.
 
 #### Network device detection
 
 The installer will complain about missing firmware files (`intel/ish/ish_ptl_*`).
-Can be ignored. The missing files are related to Intel Sensor Hub (ISH).
+Can be ignored. The missing files are related to the Intel Sensor Hub (ISH).
 
 #### Wireless network setup
 
 Network setup will fail on the get IP address step (DHCP). The reason is that the
-installer don't detects that the network interface is actually a wireless card (WiFi).
+installer don't detects that the network interface is actually a wireless card.
 
-To get around this there are two option.
+To get around this there are two options.
 
 1. Use an ethernet USB dongle to provide network connection.
 
 2. Manually set up the wireless card.
 
-The steps for the second option.
+The steps for the second option:
 
 1. Prepare a (second) `fat32`/`vfat` formatted USB stick.
 
@@ -93,7 +93,7 @@ wireless networks.)
 
 3. Go to the shell
 
-Select "Go back" which will bring up the main menu. Select "shell" from the menu.
+Select "Go back", which will bring up the main menu. Select "shell" from the menu.
 
 4. Mount the USB stick on the ASUS with the command:
 
@@ -109,6 +109,7 @@ mount /dev/sdb1 /mnt
 wpa_supplicant -B -i wlo1 -c /mnt/wpa_supplicant.conf
 
 ```
+
 Should return no errors.
 
 Exit the shell and continue with the network setup, which now should succeed.
@@ -126,3 +127,109 @@ This will install the Intel Arc/Xe graphics driver required for the LCD to work.
 installed the LCD will turn black (nothing visible) after boot.
 
 Next complete the installation and boot into the newly installed system.
+
+## Fixes
+
+After boot and with a DM (Gnome/KDE/etc) up and working some remaining issues requires fixes.
+These are:
+
+- LCD brightness can't be adjusted. Stays on 100%.
+- No sound.
+- Thouchpad not working.
+
+With the machine booted and set up with a DM (display manager).
+
+### LCD brightness
+
+Add `xe.enable_dpcd_backlight=1` to the `GRUB_CMDLINE_LINUX_DEFAULT` line in `/etc/default/grub`.
+Run `update-grub` to update `/boot/grub/grub.cfg`.
+
+After reboot it should be possible to adjust the LCD brightness.
+
+### Sound
+
+Install latest version of the `firmware-sof-signed` package. The current version of this package
+in testing is old and don't provide the firmware required to make sound work.
+
+Debian unstable (sid) has the latest version. Download and install this package with:
+
+```
+cd /tmp
+wget http://ftp.us.debian.org/debian/pool/non-free-firmware/f/firmware-sof/firmware-sof-signed_2025.12.2-2_all.deb
+sudo dpkg -i /tmp/firmware-sof-signed_2025.12.2-2_all.deb
+```
+
+After reboot sound should now work.
+
+Note that if the old version of the package is installed, the package should probably be removed first.
+Can be done with:
+
+```
+apt uninstall firmware-sof-signed
+```
+
+(An alterative to installing the package as described, is to make packages available in "unstable" available
+through "apt pinning". See Debian documentation for how this can be done.)
+
+### Touchpad
+
+Create the file `/etc/udev/hwdb.d/61-pixart-4f05-pressure-fix.hwdb` with the following content:
+
+```
+evdev:input:b0018v093Ap4F05*
+ EVDEV_ABS_18=0:100:0:0
+ EVDEV_ABS_3A=0:100:0:0
+```
+
+Next update the hardware database with the command:
+
+```
+systemd-hwdb update
+```
+
+Next create the directory `/etc/libinput` and add the file `/etc/libinput/asus-expertbook-b9406.quirks`
+with the following content:
+
+```
+[ASUS ExpertBook Ultra B9406 Touchpad]
+MatchUdevType=touchpad
+MatchBus=i2c
+MatchVendor=0x093A
+MatchProduct=0x4F05
+MatchDMIModalias=dmi:*svnASUS*:pn*B9406*
+AttrEventCode=-ABS_MT_PRESSURE;-ABS_PRESSURE;
+```
+
+After reboot the touchpad should work.
+
+See [touchpad-fix](https://github.com/burakgon/asus-expertbook-linux/tree/main/touchpad-fix) for details.
+
+## Enabling Secure Boot
+
+The ASUS ExpertBook Ultra omits the **Microsoft Corporation UEFI CA 2011** CA certificate required for enabling secure boot using Debian's shims.
+
+To make secure boot work this certificate must be added to the list of valid certificates (enroll).
+
+First obtain the CA and add it to the boot directory.
+
+```
+wget https://www.microsoft.com/pkiops/certs/MicCorUEFCA2011_2011-06-27.crt
+sudo mkdir -p /boot/efi/keys
+sudo cp MicCorUEFCA2011_2011-06-27.crt /boot/efi/keys/
+```
+
+Reboot into BIOS:
+
+1. Go to `Security` and enable "Secure boot". Some additional menues will now be available.
+2. Go to `Key Management -> Authorized Signatures (db)`.
+3. Select **Append** (not Replace) -> browse ESP and select `keys/MicCorUEFCA2011_2011-06-27.crt` and add the CA.
+
+`F10` to save and boot.
+
+Verify with:
+
+```
+mokutil --sb-state
+```
+
+Should say that secure boot is enabled.
