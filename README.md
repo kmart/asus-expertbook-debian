@@ -14,13 +14,14 @@ Both are for [archlinux](https://archlinux.org/), but the descriptions are so go
 was easy to adapt the suggestions/steps to the Debian setup. The kernel itself have also catched up a bit on
 support for this specific model and some things that that earlier required fixes now works out of the box.
 
+---
 
-</div>
-**It looks like that there are different versions of the machine on the marked, with different configurations.
-(LCDs etc.)
-The following installation and setup description might therefore not be valid in all cases. Use at own risk.**
-</div>
+**It looks like that there are different versions of the machine on
+the marked, with different configurations.  (LCDs etc.) The following
+installation and setup description might therefore not be valid in all
+cases. Use at own risk.**
 
+---
 
 ## Debian installation
 
