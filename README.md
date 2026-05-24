@@ -7,17 +7,17 @@ CD](https://www.debian.org/CD/netinst/) page. Direct link to the amd64 ISO image
 
 There are a few descriptions on how to install Linux on this ASUS model around, specifically:
 
-- [asus-expertbook-linux](https://github.com/burakgon/asus-expertbook-linux)
+- [burakgon/asus-expertbook-linux](https://github.com/burakgon/asus-expertbook-linux)
 - [Omarchy issue #5432](https://github.com/basecamp/omarchy/issues/5423)
 
-Both are for [archlinux](https://archlinux.org/), but the descriptions are so good that it
+Both descriptions are for [Arch Linux](https://archlinux.org/), but the descriptions are so good that it
 was easy to adapt the suggestions/steps to the Debian setup. The kernel itself have also catched up a bit on
 support for this specific model and some things that that earlier required fixes now works out of the box.
 
 ---
 
 **It looks like that there are different versions of the machine on
-the marked, with different configurations.  (LCDs etc.) The following
+the marked, with different configurations (LCDs etc.) The following
 installation and setup description might therefore not be valid in all
 cases. Use at own risk.**
 
@@ -28,7 +28,7 @@ cases. Use at own risk.**
 Two USB sticks will be required. One for the ISO image itself and optionally
 one for the `wpa_supplicant.conf` file required to get the wireless network working.
 
-### Prepare a USB stick with the image
+### Prepare a USB stick with the installation image
 
 Download the image and write it to the USB stick with:
 
@@ -38,7 +38,7 @@ dd if=/tmp/debian-testing-amd64-netinst.iso of=/dev/sdd bs=1M
 
 ### Boot from the USB stick
 
-Hold down the Esc key and start booting by pressing the power key. Keep on holding down the Esc key until the
+Hold down the `Esc` key and start booting by pressing the power key. Keep on holding down the `Esc` key until the
 boot menu show up.
 
 Inside the BIOS change the following:
@@ -46,9 +46,9 @@ Inside the BIOS change the following:
 - Fast boot: disable
 - Secure boot: disable
 
-Insert the USB stick in one of the USB ports and press F10 to save the BIOS changes (or use the menu).
+Insert the USB stick in one of the USB ports and press `F10` to save the BIOS changes (or use the menu).
 
-Again hold down the Esc key while the machine is booting. This should again bring up the boot menu.
+Again hold down the `Esc` key while the machine is booting. This should again bring up the boot menu.
 From the boot menu select the USB stick.
 
 ### Installation
@@ -102,7 +102,7 @@ wireless networks.)
 
 3. Go to the shell
 
-Select "Go back" one or two times. This should bring up the main menu. Select "shell" from the menu.
+Select "`<Go Back>`" one or two times. This should bring up the main menu. Select "`Execute a shell`" from the menu.
 
 4. Mount the USB stick on the ASUS with the command:
 
@@ -110,7 +110,7 @@ Select "Go back" one or two times. This should bring up the main menu. Select "s
 mount /dev/sdb1 /mnt
 ```
 
-(The USB stick should be on `/dev/sdb`. The installation USB stick is on `/dev/sda`.)
+(The USB stick should be on `/dev/sdb`. The installation USB stick should be on `/dev/sda`.)
 
 5. Enable the wireless network card with the command:
 
@@ -139,7 +139,7 @@ Next complete the installation and boot into the newly installed system.
 
 ## Fixes
 
-After boot and with a DM (Gnome/KDE/etc) up and working some remaining issues requires fixes.
+After boot and with a DM (Gnome/KDE/etc) installed and working some remaining issues requires fixes.
 These are:
 
 - LCD brightness can't be adjusted. Stays on 100%.
@@ -163,7 +163,7 @@ After reboot it should now be possible to adjust the LCD brightness.
 ### Sound
 
 Install latest version of the `firmware-sof-signed` package. The current version of this package
-in testing is old (ver. 2025.05.1) and don't provide the firmware required to make sound work.
+in testing is old (ver. 2025.05.1) and don't provide the firmware required for enabling sound.
 
 Debian unstable (sid) has the latest version (2025.12.2). Download and install this package with:
 
@@ -203,7 +203,7 @@ Next update the hardware database with the command:
 systemd-hwdb update
 ```
 
-Next create the directory `/etc/libinput` and add the file `/etc/libinput/asus-expertbook-b9406.quirks`
+Next create the directory `/etc/libinput` if it don't exists and add the file `/etc/libinput/asus-expertbook-b9406.quirks`
 with the following content:
 
 ```
@@ -218,7 +218,7 @@ AttrEventCode=-ABS_MT_PRESSURE;-ABS_PRESSURE;
 
 After reboot the touchpad should work.
 
-See [touchpad-fix](https://github.com/burakgon/asus-expertbook-linux/tree/main/touchpad-fix) for details.
+See [burakgon - touchpad-fix](https://github.com/burakgon/asus-expertbook-linux/tree/main/touchpad-fix) for details.
 
 ## Enabling Secure Boot
 
@@ -236,7 +236,7 @@ sudo cp MicCorUEFCA2011_2011-06-27.crt /boot/efi/keys/
 
 Reboot into BIOS:
 
-1. Go to `Security` and enable "Secure boot". The menues referred to below will now become available.
+1. Go to `Security` and enable "Secure boot". The menues referred to below should now become available.
 2. Go to `Key Management -> Authorized Signatures (db)`.
 3. Select **Append** (not Replace) -> Browse ESP and select `keys/MicCorUEFCA2011_2011-06-27.crt` and add the certificate.
 
