@@ -17,7 +17,7 @@ support for this specific model and some things that that earlier required fixes
 ---
 
 **It looks like that there are different versions of the machine on
-the marked, with different configurations (LCDs etc.) The following
+the market, with different configurations (LCDs etc.). The following
 installation and setup description might therefore not be valid in all
 cases. Use at own risk.**
 
@@ -173,7 +173,7 @@ wget http://ftp.us.debian.org/debian/pool/non-free-firmware/f/firmware-sof/firmw
 sudo dpkg -i /tmp/firmware-sof-signed_2025.12.2-2_all.deb
 ```
 
-After reboot sound (and microphone) should now work.
+After reboot sound (and microphone) should work.
 
 Note that if the old version of the package is installed, the package should probably be removed first.
 Can be done with:
@@ -185,7 +185,7 @@ apt uninstall firmware-sof-signed
 before installing the new version of the package.
 
 (An alterative to installing the package as described, is to make packages in "unstable" available
-through "apt pinning". See Debian documentation for how this can be done.)
+through "apt pinning". See Debian documentation for details.)
 
 ### Touchpad
 
@@ -197,7 +197,7 @@ evdev:input:b0018v093Ap4F05*
  EVDEV_ABS_3A=0:100:0:0
 ```
 
-Next update the hardware database with the command:
+Update the hardware database with the command:
 
 ```
 systemd-hwdb update
