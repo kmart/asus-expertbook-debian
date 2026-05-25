@@ -113,11 +113,12 @@ mount /dev/sdb1 /mnt
 (The USB stick should normally be on `/dev/sdb` and the installation USB stick on `/dev/sda`,
 but sometimes it is the other way around.)
 
-If the `mount` command fails with "`Device or resource busy`", then the device is on `/dev/sda1`
-and not on `/dev/sdb1`. Retry wiht correct device paramter.
+If the `mount` command fails with "`Device or resource busy`" then the device is on `/dev/sda1`
+and not on `/dev/sdb1`. Retry with correct device parameter.
 
-If the `mount` command fails with "`Invalid command ...`", then something has gone wrong.
-Usually the command will work correcty on restart of the installation process.
+If the `mount` command fails with "`Invalid command ...`" then something has gone wrong.
+Usually the command will work correctly if the installation process is started from the
+beginnnig again.
 
 5. Enable the wireless network card with the command:
 
@@ -153,7 +154,7 @@ comes up automatically after booting from the new system.
 Next complete the installation and boot into the newly installed system.
 
 **Note:** After reboot and with only the minimal system installed (no desktop etc.) the `mncli` command
-can be used to establish the network.
+from the `network-manager` package can be used to establish the network.
 
 ```
 sudo nmcli device wifi connect YOUR_SSID --ask
@@ -207,6 +208,8 @@ After reboot sound (and microphone) should work.
 
 (An alterative to installing the new version of the `firmware-sof-signed` package is to make packages in "unstable" available
 through "apt pinning". See Debian documentation for details.)
+
+See [burakgon - audio-fix](https://github.com/burakgon/asus-expertbook-linux/tree/main/audio-fix) for details.
 
 ### Touchpad
 
