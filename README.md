@@ -110,7 +110,14 @@ Select "`<Go Back>`" one or two times. This should bring up the main menu. Selec
 mount /dev/sdb1 /mnt
 ```
 
-(The USB stick should be on `/dev/sdb`. The installation USB stick should be on `/dev/sda`.)
+(The USB stick should normally be on `/dev/sdb` and the installation USB stick on `/dev/sda`,
+but sometimes it is the other way around.)
+
+If the `mount` command fails with "`Device or resource busy`", then the device is on `/dev/sda1`
+and not on `/dev/sdb1`. Retry wiht correct device paramter.
+
+If the `mount` command fails with "`Invalid command ...`", then something has gone wrong.
+Usually the command will work correcty on restart of the installation process.
 
 5. Enable the wireless network card with the command:
 
@@ -119,27 +126,42 @@ wpa_supplicant -B -i wlo1 -c /mnt/wpa_supplicant.conf
 
 ```
 
-Should return no errors.
+Should return "`Successfully initialized wpa_supplicant`".
 
 Exit the shell and continue with the network setup, which now should succeed.
 
-#### Package selection
+#### Adding LCD firmware and networking tools
 
-After having selected the packages to be installed and completed the installation of the
-packages, go back to the shell and run the command:
+On the "`Installation completed`" screen, the last screen before booting into the newly
+installed system, select "`<Go Back>`" and enter the shell again.
+
+Install the firmware for the LCD screen and the `network-manager` package:
 
 ```
-apt install firmware-intel-graphics
+mount -o bind /sys /target/sys
+mount -o bind /dev /target/dev
+chroot /target
+apt install firmware-intel-graphics network-manager -y
 ```
 
-This will install the Intel Arc/Xe graphics driver required for the LCD to work. Without the `xe` driver
+This will install the Intel Arc/Xe graphics driver required for the LCD to work. Without the driver
 installed the LCD will turn black (nothing visible) after boot.
+
+The `network-manager` package might be needed to set up the network if the network don't
+comes up automatically after booting from the new system.
 
 Next complete the installation and boot into the newly installed system.
 
+**Note:** After reboot and with only the minimal system installed (no desktop etc.) the `mncli` command
+can be used to establish the network.
+
+```
+sudo nmcli device wifi connect YOUR_SSID --ask
+```
+
 ## Fixes
 
-After boot and with a DM (Gnome/KDE/etc) installed and working some remaining issues requires fixes.
+After reboot and with a DM (Gnome/KDE/etc) installed and working some remaining issues requires fixes.
 These are:
 
 - LCD brightness can't be adjusted. Stays on 100%.
@@ -162,12 +184,20 @@ After reboot it should now be possible to adjust the LCD brightness.
 
 ### Sound
 
-Install latest version of the `firmware-sof-signed` package. The current version of this package
-in testing is old (ver. 2025.05.1) and don't provide the firmware required for enabling sound.
-
-Debian unstable (sid) has the latest version (2025.12.2). Download and install this package with:
+Install the Cirrus CS35L56 firmware.
 
 ```
+sudo apt install firmware-cirrus
+```
+
+Next install latest version of the `firmware-sof-signed` package. The current version of this package
+in testing is old (ver. 2025.05.1) and don't provide the firmware required for enabling sound.
+
+Debian unstable (sid) has the latest version (2025.12.2). Remove the old version of the package
+and download and install the latest version of the package with:
+
+```
+apt remove firmware-sof-signed -y
 cd /tmp
 wget http://ftp.us.debian.org/debian/pool/non-free-firmware/f/firmware-sof/firmware-sof-signed_2025.12.2-2_all.deb
 sudo dpkg -i /tmp/firmware-sof-signed_2025.12.2-2_all.deb
@@ -175,16 +205,7 @@ sudo dpkg -i /tmp/firmware-sof-signed_2025.12.2-2_all.deb
 
 After reboot sound (and microphone) should work.
 
-Note that if the old version of the package is installed, the package should probably be removed first.
-Can be done with:
-
-```
-apt uninstall firmware-sof-signed
-```
-
-before installing the new version of the package.
-
-(An alterative to installing the package as described, is to make packages in "unstable" available
+(An alterative to installing the new version of the `firmware-sof-signed` package is to make packages in "unstable" available
 through "apt pinning". See Debian documentation for details.)
 
 ### Touchpad
