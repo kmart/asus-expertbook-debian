@@ -8,7 +8,7 @@ CD](https://www.debian.org/CD/netinst/) page. Direct link to the amd64 ISO image
 There are a few descriptions on how to install Linux on this ASUS model around, specifically:
 
 - [burakgon/asus-expertbook-linux](https://github.com/burakgon/asus-expertbook-linux)
-- [Omarchy issue #5432](https://github.com/basecamp/omarchy/issues/5423)
+- [mijunys commits to Omarchy](https://github.com/basecamp/omarchy/commits/master?author=mijuny)
 
 Both descriptions are for [Arch Linux](https://archlinux.org/), but the descriptions are so good that it
 was easy to adapt the suggestions/steps to the Debian setup. The kernel itself have also catched up a bit on
