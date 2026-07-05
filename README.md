@@ -246,27 +246,11 @@ See [burakgon - touchpad-fix](https://github.com/burakgon/asus-expertbook-linux/
 
 ## Enabling Secure Boot
 
-The ASUS ExpertBook Ultra omits the **Microsoft Corporation UEFI CA 2011** CA certificate required for enabling secure boot using Debian's shims.
+Secure Boot should work out of the box with the new ver. 1.51 dual
+signed `shim-signed` package. The new package was migrated to testing
+2026-06-21.
 
-To make secure boot work this certificate must be added to the list of valid certificates (enroll).
-
-First obtain the certificate and add it to the boot directory.
-
-```
-wget https://www.microsoft.com/pkiops/certs/MicCorUEFCA2011_2011-06-27.crt
-sudo mkdir -p /boot/efi/keys
-sudo cp MicCorUEFCA2011_2011-06-27.crt /boot/efi/keys/
-```
-
-Reboot into BIOS:
-
-1. Go to `Security` and enable "Secure boot". The menues referred to below should now become available.
-2. Go to `Key Management -> Authorized Signatures (db)`.
-3. Select **Append** (not Replace) -> Browse ESP and select `keys/MicCorUEFCA2011_2011-06-27.crt` and add the certificate.
-
-`F10` to save and boot.
-
-Verify with:
+Verify that Secure Boot is working with the command:
 
 ```
 mokutil --sb-state
